@@ -19,6 +19,7 @@ export default function Home() {
           <TabsContent value="rising" className="space-y-[50px]">
             <ProgramReporting />
           </TabsContent>
+
           
           <TabsContent value="ongonza" className="space-y-[50px]">
             <AnnualReport />
