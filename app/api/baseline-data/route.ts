@@ -5,7 +5,7 @@ import { join } from "path";
 
 export async function GET(req: NextRequest) {
   try {
-    // Read the Excel file
+    // Read the Excel 
     const filePath = join(process.cwd(), "Monthly Loan Reports-Premier Credit.xlsx");
     const fileBuffer = await readFile(filePath);
     const workbook = XLSX.read(fileBuffer, { type: "buffer" });
