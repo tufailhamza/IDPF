@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     // Column indices (0-based): A=0, B=1, E=4, F=5, J=9, M=12
     const colA = 0; // For counting loans
     const colB = 1; // Branches
-    const colE = 4; // Owner Gender
+    const colE = 4; // Owner Ge
     const colF = 5; // Schools
     const colJ = 9; // Loan Size
     const colM = 12; // Monthly Total / Portfolio Value
