@@ -21,11 +21,11 @@ const SchoolProprietorGenderCard = ({
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-muted-foreground">Female Proprietors</span>
-                <span className="text-2xl font-bold text-foreground">{femalePercent}%</span>
+                <span className="text-2xl font-bold text-foreground">{typeof femalePercent === 'number' ? femalePercent.toFixed(2) : femalePercent}%</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-xs text-muted-foreground">Male Proprietors</span>
-                <span className="text-2xl font-bold text-foreground">{malePercent}%</span>
+                <span className="text-2xl font-bold text-foreground">{typeof malePercent === 'number' ? malePercent.toFixed(2) : malePercent}%</span>
               </div>
             </div>
           </div>

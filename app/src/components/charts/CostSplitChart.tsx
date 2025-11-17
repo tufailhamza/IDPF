@@ -59,7 +59,7 @@ const CostSplitChart = () => {
             />
             <Tooltip 
               formatter={(value: number, name: string) => [
-                `${value}%`,
+                `${value.toFixed(2)}%`,
                 name === 'shared' ? 'Shared Costs' : 
                 name === 'chair' ? 'Chair Funded' : 'Foundation Funded'
               ]}

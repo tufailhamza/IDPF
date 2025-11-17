@@ -36,7 +36,17 @@ export async function GET(req: NextRequest) {
     const colQ = 16; // Boys
     const colR = 17; // Girls
     const colS = 18; // Total Student Reach
-    const colAQ = 42; // Annual Fees
+    
+    // Find Annual Fees column from header row
+    let colAQ = 42; // Default to AQ
+    for (let i = 0; i < headerRow.length; i++) {
+      const header = String(headerRow[i] || "").toLowerCase().trim();
+      if (header.includes("annual fee") || header.includes("tuition") || (header.includes("fee") && header.includes("annual"))) {
+        colAQ = i;
+        console.log(`Found Annual Fees column at index ${i} (header: "${headerRow[i]}")`);
+        break;
+      }
+    }
 
     // Process data rows (skip header)
     let totalSchools = 0;
@@ -62,13 +72,9 @@ export async function GET(req: NextRequest) {
       
       validRows++;
       
-      // Total Number of Schools: SUM(COL C)
-      if (row[colC] !== null && row[colC] !== undefined && row[colC] !== "") {
-        const schoolCount = Number(row[colC]);
-        if (!isNaN(schoolCount) && schoolCount > 0) {
-          totalSchools += schoolCount;
-        }
-      }
+      // Total Number of Schools: COUNT valid rows (each row represents one school in baseline form)
+      // Count each valid row as 1 school
+      totalSchools += 1;
 
       // School Proprietor Gender: COL G
       if (row[colG] !== null && row[colG] !== undefined && row[colG] !== "") {
@@ -115,32 +121,102 @@ export async function GET(req: NextRequest) {
       }
 
       // Annual Fees: COL AQ
+      // Try to find annual fees - check primary column first, then fallbacks
+      let feeFound = false;
+      
+      // First, try the detected/default column (AQ = 42)
       if (row[colAQ] !== null && row[colAQ] !== undefined && row[colAQ] !== "") {
         const fee = Number(row[colAQ]);
+        // Accept any positive number for the primary column
         if (!isNaN(fee) && fee > 0) {
           tuitionFees.push(fee);
+          feeFound = true;
+        }
+      }
+      
+      // If primary column doesn't have data, try checking nearby columns (40-50)
+      if (!feeFound) {
+        for (let colIndex = 40; colIndex <= 50; colIndex++) {
+          if (row[colIndex] !== null && row[colIndex] !== undefined && row[colIndex] !== "") {
+            const fee = Number(row[colIndex]);
+            // Check if it's a reasonable annual fee (between 1,000 and 500,000 KES)
+            if (!isNaN(fee) && fee >= 1000 && fee <= 500000) {
+              tuitionFees.push(fee);
+              feeFound = true;
+              break; // Only take first valid fee found in this range
+            }
+          }
+        }
+      }
+      
+      // Last resort: search columns 19-39 and 51+ for reasonable fee values
+      if (!feeFound && row.length > 0) {
+        for (let colIndex = 19; colIndex < Math.min(row.length, 100); colIndex++) {
+          // Skip columns 40-50 (already checked above)
+          if (colIndex >= 40 && colIndex <= 50) continue;
+          
+          if (row[colIndex] !== null && row[colIndex] !== undefined && row[colIndex] !== "") {
+            const fee = Number(row[colIndex]);
+            // Check if it's a reasonable annual fee (between 1,000 and 500,000 KES)
+            if (!isNaN(fee) && fee >= 1000 && fee <= 500000) {
+              tuitionFees.push(fee);
+              feeFound = true;
+              break; // Only take first valid fee found
+            }
+          }
         }
       }
     }
 
     // Calculate percentages
     const totalProprietors = femaleProprietors + maleProprietors;
-    const femaleProprietorPercent = totalProprietors > 0 ? (femaleProprietors / totalProprietors) * 100 : 0;
-    const maleProprietorPercent = totalProprietors > 0 ? (maleProprietors / totalProprietors) * 100 : 0;
+    const femaleProprietorPercent = totalProprietors > 0 
+      ? parseFloat(((femaleProprietors / totalProprietors) * 100).toFixed(2)) 
+      : 0;
+    const maleProprietorPercent = totalProprietors > 0 
+      ? parseFloat(((maleProprietors / totalProprietors) * 100).toFixed(2)) 
+      : 0;
 
     const totalTraining = trainingYes + trainingNo;
-    const trainingYesPercent = totalTraining > 0 ? (trainingYes / totalTraining) * 100 : 0;
-    const trainingNoPercent = totalTraining > 0 ? (trainingNo / totalTraining) * 100 : 0;
+    const trainingYesPercent = totalTraining > 0 
+      ? parseFloat(((trainingYes / totalTraining) * 100).toFixed(2)) 
+      : 0;
+    const trainingNoPercent = totalTraining > 0 
+      ? parseFloat(((trainingNo / totalTraining) * 100).toFixed(2)) 
+      : 0;
 
-    const boysPercent = totalStudentReach > 0 ? (totalBoys / totalStudentReach) * 100 : 0;
-    const girlsPercent = totalStudentReach > 0 ? (totalGirls / totalStudentReach) * 100 : 0;
+    const boysPercent = totalStudentReach > 0 
+      ? parseFloat(((totalBoys / totalStudentReach) * 100).toFixed(2)) 
+      : 0;
+    const girlsPercent = totalStudentReach > 0 
+      ? parseFloat(((totalGirls / totalStudentReach) * 100).toFixed(2)) 
+      : 0;
 
     // Calculate tuition fee statistics
-    const averageTuition = tuitionFees.length > 0 
-      ? tuitionFees.reduce((sum, fee) => sum + fee, 0) / tuitionFees.length 
+    // Filter out any invalid fees and ensure we have valid numbers
+    // Also filter to reasonable range (1,000 to 500,000) to avoid picking up wrong columns
+    const validFees = tuitionFees.filter(fee => 
+      fee > 0 && 
+      !isNaN(fee) && 
+      isFinite(fee) &&
+      fee >= 1000 &&  // At least 1,000 KES
+      fee <= 500000   // At most 500,000 KES
+    );
+    
+    const averageTuition = validFees.length > 0 
+      ? Math.round(validFees.reduce((sum, fee) => sum + fee, 0) / validFees.length)
       : 0;
-    const lowestTuition = tuitionFees.length > 0 ? Math.min(...tuitionFees) : 0;
-    const maximumTuition = tuitionFees.length > 0 ? Math.max(...tuitionFees) : 0;
+    const lowestTuition = validFees.length > 0 ? Math.min(...validFees) : 0;
+    const maximumTuition = validFees.length > 0 ? Math.max(...validFees) : 0;
+    
+    console.log(`Fee statistics - Total fees found: ${tuitionFees.length}, Valid fees (1K-500K range): ${validFees.length}`);
+    if (validFees.length > 0) {
+      console.log(`Fee range: ${lowestTuition} - ${maximumTuition}, Average: ${averageTuition}`);
+      console.log(`Sample fees (first 10):`, validFees.slice(0, 10));
+    } else if (tuitionFees.length > 0) {
+      console.log(`WARNING: Found ${tuitionFees.length} fees but none in valid range (1K-500K)`);
+      console.log(`Sample fees found (may be out of range):`, tuitionFees.slice(0, 10));
+    }
 
     // Calculate quartiles
     let quartile1 = 0;
@@ -169,7 +245,21 @@ export async function GET(req: NextRequest) {
     }
 
     console.log(`Processed ${validRows} valid rows from sheet "${sheetName}"`);
-    console.log(`Total Schools: ${totalSchools}, Student Reach: ${totalStudentReach}`);
+    console.log(`Total Schools: ${totalSchools} (counted as ${validRows} valid rows), Student Reach: ${totalStudentReach}`);
+    console.log(`Annual Fees found: ${tuitionFees.length} entries, Average: ${averageTuition}, Lowest: ${lowestTuition}, Maximum: ${maximumTuition}`);
+    
+    // Debug: Check sample row data for annual fees
+    if (tuitionFees.length === 0 && data.length > 1) {
+      console.log(`No annual fees found. Checking sample rows...`);
+      console.log(`Using column index ${colAQ} for annual fees`);
+      console.log(`Header row sample (columns 35-50):`, headerRow.slice(35, 51));
+      for (let i = 1; i < Math.min(6, data.length); i++) {
+        const row = data[i];
+        if (row && !row.every(cell => cell === null || cell === undefined || cell === "")) {
+          console.log(`Row ${i} - Column ${colAQ}:`, row[colAQ], `Columns 40-50:`, row.slice(40, 51));
+        }
+      }
+    }
 
     return NextResponse.json({
       totalSchools,

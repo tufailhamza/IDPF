@@ -7,9 +7,15 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 const fetchTopBranches = async () => {
   const response = await fetch("/api/top-branches");
   if (!response.ok) {
-    throw new Error("Failed to fetch top branches");
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Failed to fetch top branches");
   }
-  return response.json();
+  const data = await response.json();
+  // Handle case where API returns error object instead of array
+  if (data.error) {
+    throw new Error(data.error);
+  }
+  return data;
 };
 
 const COLORS = [
@@ -32,11 +38,23 @@ const KenyaBranchPerformanceChart = () => {
   });
 
   // Transform data for the chart - convert to millions
-  const chartData = data?.map((item: any, index: number) => ({
-    branch: item.branch,
-    commitment: item.commitment / 1000000, // Convert to millions
-    color: COLORS[index % COLORS.length],
-  })) || [];
+  const chartData = data && Array.isArray(data) && data.length > 0
+    ? data.map((item: any, index: number) => ({
+        branch: item.branch || "Unknown",
+        commitment: item.commitment ? item.commitment / 1000000 : 0, // Convert to millions
+        color: COLORS[index % COLORS.length],
+      }))
+    : [];
+
+  // Debug logging
+  if (data && !isLoading && !error) {
+    console.log(`KenyaBranchPerformanceChart:`, {
+      rawData: data,
+      chartData,
+      dataLength: data?.length || 0,
+      chartDataLength: chartData.length,
+    });
+  }
 
   if (isLoading) {
     return (
@@ -63,12 +81,29 @@ const KenyaBranchPerformanceChart = () => {
         </CardHeader>
         <CardContent>
           <div className="h-[350px] flex items-center justify-center text-destructive">
-            Error loading chart data
+            Error loading chart data: {error instanceof Error ? error.message : "Unknown error"}
           </div>
         </CardContent>
       </Card>
     );
   }
+
+  if (!chartData || chartData.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Top 10 Branches by Total Disbursement (KES Millions)</CardTitle>
+          <p className="text-sm text-muted-foreground">Branch performance ranking - Top 10 represent 53.7% of portfolio</p>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[350px] flex items-center justify-center text-muted-foreground">
+            No data available
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>

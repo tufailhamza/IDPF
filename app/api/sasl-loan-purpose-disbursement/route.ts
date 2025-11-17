@@ -10,24 +10,78 @@ export async function GET(req: NextRequest) {
     const fileBuffer = await readFile(filePath);
     const workbook = XLSX.read(fileBuffer, { type: "buffer" });
 
-    // Find the "All Loans upto Sept 2025" sheet
-    const sheetName = workbook.SheetNames.find(
+    // Find the "All Loans" sheet - try multiple patterns
+    let sheetName = workbook.SheetNames.find(
       (name) => name.toLowerCase().includes("all loans") && (name.toLowerCase().includes("sept") || name.toLowerCase().includes("2025"))
     );
 
+    // Fallback: try just "all loans"
     if (!sheetName) {
+      sheetName = workbook.SheetNames.find(
+        (name) => name.toLowerCase().includes("all loans")
+      );
+    }
+
+    // Fallback: try any sheet with "loans" in the name
+    if (!sheetName) {
+      sheetName = workbook.SheetNames.find(
+        (name) => name.toLowerCase().includes("loans")
+      );
+    }
+
+    if (!sheetName) {
+      console.log("Available sheets:", workbook.SheetNames);
       return NextResponse.json(
-        { error: "All Loans upto Sept 2025 sheet not found" },
+        { error: "All Loans sheet not found", availableSheets: workbook.SheetNames },
         { status: 404 }
       );
     }
 
+    console.log(`Using sheet: "${sheetName}"`);
+
     const worksheet = workbook.Sheets[sheetName];
     const data = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: null }) as any[][];
 
-    // Column indices: D = 3 (Loan Purpose), K = 10 (Loan Amount Disbursed)
-    const colD = 3; // Loan Purpose
-    const colK = 10; // Loan Amount Disbursed
+    // Find purpose and amount columns from header row
+    const headerRow = data[0] || [];
+    let colD = 3; // Default to column D
+    let colK = 10; // Default to column K
+    
+    // First pass: Look for amount/disbursement column (prioritize this)
+    for (let i = 0; i < headerRow.length; i++) {
+      const header = String(headerRow[i] || "").toLowerCase().trim();
+      if (header.includes("disbamt") || header.includes("disbursed") || (header.includes("amount") && !header.includes("purpose"))) {
+        colK = i;
+        break; // Found amount column, stop searching
+      }
+    }
+    
+    // Second pass: Look for purpose column
+    for (let i = 0; i < headerRow.length; i++) {
+      const header = String(headerRow[i] || "").toLowerCase().trim();
+      if (header.includes("purpose") || header.includes("loan purpose") || header.includes("use")) {
+        colD = i;
+        break; // Found purpose column, stop searching
+      }
+    }
+
+    console.log(`SASL - Purpose column index: ${colD}, Amount column index: ${colK}`);
+    console.log(`SASL - Header row sample:`, headerRow.slice(0, 15));
+    console.log(`SASL - Purpose header: "${headerRow[colD]}", Amount header: "${headerRow[colK]}"`);
+    
+    // Verify we didn't get the same column for both
+    if (colD === colK) {
+      console.warn(`WARNING: Purpose and Amount columns are the same (${colD})! Checking header row...`);
+      // Try to find amount column by looking for "disbamt" more carefully
+      for (let i = 0; i < headerRow.length; i++) {
+        const header = String(headerRow[i] || "").toLowerCase().trim();
+        if (header === "disbamt" || header.includes("disb") && header.includes("amt")) {
+          colK = i;
+          console.log(`Fixed amount column to index ${i} (header: "${headerRow[i]}")`);
+          break;
+        }
+      }
+    }
 
     // Aggregate by loan purpose
     const purposeTotals: { [key: string]: number } = {};
@@ -41,27 +95,35 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      // Get loan purpose from COL D
+      // Get loan purpose from the identified column
       const loanPurpose = row[colD] ? String(row[colD]).trim() : "";
       
-      // Get loan amount from COL K
-      const loanAmount = row[colK] !== null && row[colK] !== undefined && row[colK] !== ""
-        ? Number(row[colK])
-        : null;
-
+      // Get loan amount from the identified column
+      let loanAmountValue = row[colK];
+      
       // Only process if we have both purpose and amount
-      if (loanPurpose && loanAmount !== null && !isNaN(loanAmount) && loanAmount > 0) {
-        // Normalize purpose name (capitalize first letter of each word)
-        const normalizedPurpose = loanPurpose
-          .split(/\s+/)
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-          .join(" ");
-
-        if (!purposeTotals[normalizedPurpose]) {
-          purposeTotals[normalizedPurpose] = 0;
+      if (loanPurpose && loanAmountValue !== null && loanAmountValue !== undefined && loanAmountValue !== "") {
+        // Try to extract number if it's a string with currency or formatting
+        if (typeof loanAmountValue === 'string') {
+          // Remove currency symbols, commas, and extract number
+          loanAmountValue = loanAmountValue.replace(/[^\d.]/g, '');
         }
-        purposeTotals[normalizedPurpose] += loanAmount;
+        const loanAmount = Number(loanAmountValue);
+        
+        if (!isNaN(loanAmount) && loanAmount > 0) {
+          // Normalize purpose name (capitalize first letter of each word)
+          const normalizedPurpose = loanPurpose
+            .split(/\s+/)
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(" ");
+
+          if (!purposeTotals[normalizedPurpose]) {
+            purposeTotals[normalizedPurpose] = 0;
+          }
+          purposeTotals[normalizedPurpose] += loanAmount;
+        }
       }
+
     }
 
     // Convert to array and sort by total (descending)
@@ -73,6 +135,16 @@ export async function GET(req: NextRequest) {
       .sort((a, b) => b.amount - a.amount);
 
     console.log(`Processed ${purposeData.length} loan purposes from SASL sheet "${sheetName}"`);
+    console.log(`Sample data:`, purposeData.slice(0, 5));
+
+    if (purposeData.length === 0) {
+      console.warn(`No loan purpose data found. Processed ${data.length - 1} rows.`);
+      console.log(`Sample row data:`, data.slice(1, 5).map(row => ({
+        purpose: row[colD],
+        amount: row[colK],
+        row: row.slice(0, 15)
+      })));
+    }
 
     return NextResponse.json(purposeData);
   } catch (err) {

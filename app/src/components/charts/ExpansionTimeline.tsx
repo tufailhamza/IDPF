@@ -158,7 +158,7 @@ const ExpansionTimeline = () => {
                 hide
               />
               <Tooltip 
-                formatter={(value: number) => [`${value}%`, 'Repayment Rate']}
+                formatter={(value: number) => [`${value.toFixed(2)}%`, 'Repayment Rate']}
                 labelFormatter={(label) => `Year: ${label}`}
                 labelStyle={{ color: 'hsl(var(--foreground))' }}
                 contentStyle={{

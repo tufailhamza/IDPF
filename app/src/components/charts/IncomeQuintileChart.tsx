@@ -52,7 +52,7 @@ const IncomeQuintileChart = () => {
               stroke="hsl(var(--muted-foreground))"
               fontSize={12}
               domain={[0, 100]}
-              tickFormatter={(value) => `${value}%`}
+              tickFormatter={(value) => `${value.toFixed(2)}%`}
             />
             <YAxis 
               type="category"
@@ -62,7 +62,7 @@ const IncomeQuintileChart = () => {
             />
             <Tooltip 
               formatter={(value: number, name: string) => [
-                `${value}%`,
+                `${value.toFixed(2)}%`,
                 `Quintile ${name.toUpperCase()}`
               ]}
               labelStyle={{ color: 'hsl(var(--foreground))' }}

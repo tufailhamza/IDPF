@@ -25,14 +25,14 @@ const LoanPortfolioPaymentStatusChart = () => {
               outerRadius={130}
               paddingAngle={2}
               dataKey="value"
-              label={({ value }) => `${value}%`}
+              label={({ value }) => `${Number(value).toFixed(2)}%`}
               labelLine={false}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
-            <Tooltip formatter={(value) => [`${value}%`, "Percentage"]} />
+            <Tooltip formatter={(value) => [`${Number(value).toFixed(2)}%`, "Percentage"]} />
             <Legend 
               verticalAlign="middle" 
               align="right"

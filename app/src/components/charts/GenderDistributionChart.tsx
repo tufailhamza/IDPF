@@ -81,7 +81,7 @@ const GenderDistributionChart = ({ dataSource = "premier" }: GenderDistributionC
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ value }) => `${value.toFixed(1)}%`}
+              label={({ value }) => `${value.toFixed(2)}%`}
               innerRadius={60}
               outerRadius={100}
               fill="#8884d8"
@@ -91,7 +91,7 @@ const GenderDistributionChart = ({ dataSource = "premier" }: GenderDistributionC
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip formatter={(value) => [`${Number(value).toFixed(1)}%`, "Percentage"]} />
+            <Tooltip formatter={(value) => [`${Number(value).toFixed(2)}%`, "Percentage"]} />
           </PieChart>
         </ResponsiveContainer>
         
@@ -106,7 +106,7 @@ const GenderDistributionChart = ({ dataSource = "premier" }: GenderDistributionC
                 <span>{item.name}</span>
               </div>
               <div className="font-medium">
-                {item.value}%
+                {typeof item.value === 'number' ? item.value.toFixed(2) : item.value}%
               </div>
             </div>
           ))}

@@ -161,7 +161,7 @@ const AnnualReport = () => {
         />
         <KPICard
           title="Owner Gender Diversity"
-          value={ytdData ? `${(ytdData.ownerGenderDiversity?.female || 0).toFixed(1)}%` : "64.0%"}
+          value={ytdData ? `${(ytdData.ownerGenderDiversity?.female || 0).toFixed(2)}%` : "64.00%"}
           subtitle="Female proprietors"
           trend=""
           trendType="positive"

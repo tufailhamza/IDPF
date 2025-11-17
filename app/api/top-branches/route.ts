@@ -10,24 +10,56 @@ export async function GET(req: NextRequest) {
     const fileBuffer = await readFile(filePath);
     const workbook = XLSX.read(fileBuffer, { type: "buffer" });
 
-    // Find the "All Loans upto Sept 2025" sheet
-    const sheetName = workbook.SheetNames.find(
+    // Find the "All Loans" sheet - try multiple patterns
+    let sheetName = workbook.SheetNames.find(
       (name) => name.toLowerCase().includes("all loans") && (name.toLowerCase().includes("sept") || name.toLowerCase().includes("2025"))
     );
 
+    // Fallback: try just "all loans"
     if (!sheetName) {
+      sheetName = workbook.SheetNames.find(
+        (name) => name.toLowerCase().includes("all loans")
+      );
+    }
+
+    // Fallback: try any sheet with "loans" in the name
+    if (!sheetName) {
+      sheetName = workbook.SheetNames.find(
+        (name) => name.toLowerCase().includes("loans")
+      );
+    }
+
+    if (!sheetName) {
+      console.log("Available sheets:", workbook.SheetNames);
       return NextResponse.json(
-        { error: "All Loans upto Sept 2025 sheet not found" },
+        { error: "All Loans sheet not found", availableSheets: workbook.SheetNames },
         { status: 404 }
       );
     }
 
+    console.log(`Using sheet: "${sheetName}"`);
+
     const worksheet = workbook.Sheets[sheetName];
     const data = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: null }) as any[][];
 
-    // Column indices: B = 1 (Branch), D = 3 (Loan Amount Disbursed)
-    const colB = 1; // Branch
-    const colD = 3; // Loan Amount Disbursed
+    // Find branch and amount columns from header row
+    const headerRow = data[0] || [];
+    let colB = 1; // Default to column B
+    let colD = 3; // Default to column D
+    
+    // Look for branch-related column headers
+    for (let i = 0; i < headerRow.length; i++) {
+      const header = String(headerRow[i] || "").toLowerCase().trim();
+      if (header.includes("branch") || header.includes("location")) {
+        colB = i;
+      }
+      if (header.includes("amount") || header.includes("disbursed") || header.includes("loan amount")) {
+        colD = i;
+      }
+    }
+
+    console.log(`Branch column index: ${colB}, Amount column index: ${colD}`);
+    console.log(`Header row sample:`, headerRow.slice(0, 10));
 
     // Aggregate by branch
     const branchTotals: { [key: string]: number } = {};
@@ -68,6 +100,16 @@ export async function GET(req: NextRequest) {
       .slice(0, 10); // Top 10
 
     console.log(`Processed ${branchData.length} top branches from sheet "${sheetName}"`);
+    console.log(`Sample data:`, branchData.slice(0, 5));
+
+    if (branchData.length === 0) {
+      console.warn(`No branch data found. Processed ${data.length - 1} rows.`);
+      console.log(`Sample row data:`, data.slice(1, 5).map(row => ({
+        branch: row[colB],
+        amount: row[colD],
+        row: row.slice(0, 10)
+      })));
+    }
 
     return NextResponse.json(branchData);
   } catch (err) {

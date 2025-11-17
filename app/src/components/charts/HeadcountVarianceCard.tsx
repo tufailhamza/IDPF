@@ -14,7 +14,7 @@ const data = [
 const HeadcountVarianceCard = () => {
   const currentHeadcount = 56;
   const plannedHeadcount = 58;
-  const variance = ((currentHeadcount - plannedHeadcount) / plannedHeadcount * 100).toFixed(1);
+  const variance = ((currentHeadcount - plannedHeadcount) / plannedHeadcount * 100).toFixed(2);
 
   return (
     <Card>

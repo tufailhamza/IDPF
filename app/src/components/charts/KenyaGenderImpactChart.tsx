@@ -42,7 +42,7 @@ const KenyaGenderImpactChart = () => {
             <Tooltip 
               formatter={(value, name, props) => {
                 const entry = props.payload;
-                return [`${value}% (${entry.loans} loans, KES ${entry.disbursed}M)`, "Distribution"];
+                return [`${Number(value).toFixed(2)}% (${entry.loans} loans, KES ${entry.disbursed}M)`, "Distribution"];
               }}
             />
             <Legend />
@@ -60,7 +60,7 @@ const KenyaGenderImpactChart = () => {
                   />
                   <span className="font-medium">{item.name}</span>
                 </div>
-                <span className="font-bold text-lg">{item.value}%</span>
+                <span className="font-bold text-lg">{item.value.toFixed(2)}%</span>
               </div>
               <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground">
                 <div>

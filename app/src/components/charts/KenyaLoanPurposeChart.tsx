@@ -89,7 +89,7 @@ const KenyaLoanPurposeChart = () => {
               outerRadius={150}
               paddingAngle={2}
               dataKey="value"
-              label={({ value }) => `${value.toFixed(1)}%`}
+              label={({ value }) => `${value.toFixed(2)}%`}
               labelLine={false}
             >
               {chartData.map((entry: any, index: number) => (
@@ -99,7 +99,7 @@ const KenyaLoanPurposeChart = () => {
             <Tooltip 
               formatter={(value, name, props) => {
                 const entry = props.payload;
-                return [`${Number(value).toFixed(1)}% (KES ${Number(entry.amount).toFixed(2)}M)`, "Distribution"];
+                return [`${Number(value).toFixed(2)}% (KES ${Number(entry.amount).toFixed(2)}M)`, "Distribution"];
               }}
             />
             <Legend 

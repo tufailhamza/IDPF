@@ -14,9 +14,15 @@ const fetchLoanPurposeDisbursement = async (source: "premier" | "sasl" = "premie
     : "/api/loan-purpose-disbursement";
   const response = await fetch(endpoint);
   if (!response.ok) {
-    throw new Error(`Failed to fetch loan purpose disbursement for ${source}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Failed to fetch loan purpose disbursement for ${source}`);
   }
-  return response.json();
+  const data = await response.json();
+  // Handle case where API returns error object instead of array
+  if (data.error) {
+    throw new Error(data.error);
+  }
+  return data;
 };
 
 const formatCurrency = (num: number): string => {
@@ -30,11 +36,23 @@ const LoanPurposeChart = ({ dataSource = "premier" }: LoanPurposeChartProps) => 
   });
 
   // Transform data for the chart - convert to thousands for display
-  const chartData = data?.map((item: any) => ({
-    name: item.name,
-    amount: item.amount / 1000, // Convert to thousands
-    amountFormatted: formatCurrency(item.amount),
-  })) || [];
+  const chartData = data && Array.isArray(data) && data.length > 0
+    ? data.map((item: any) => ({
+        name: item.name || "Unknown",
+        amount: item.amount ? item.amount / 1000 : 0, // Convert to thousands
+        amountFormatted: formatCurrency(item.amount || 0),
+      }))
+    : [];
+
+  // Debug logging
+  if (data && !isLoading && !error) {
+    console.log(`LoanPurposeChart (${dataSource}):`, {
+      rawData: data,
+      chartData,
+      dataLength: data?.length || 0,
+      chartDataLength: chartData.length,
+    });
+  }
 
   if (isLoading) {
     return (
@@ -61,12 +79,29 @@ const LoanPurposeChart = ({ dataSource = "premier" }: LoanPurposeChartProps) => 
         </CardHeader>
         <CardContent className="pt-0 pb-4">
           <div className="h-[280px] flex items-center justify-center text-destructive">
-            Error loading chart data
+            Error loading chart data: {error instanceof Error ? error.message : "Unknown error"}
           </div>
         </CardContent>
       </Card>
     );
   }
+
+  if (!chartData || chartData.length === 0) {
+    return (
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Disbursement by Loan Purpose</CardTitle>
+          <p className="text-sm text-muted-foreground">Loan distribution by purpose</p>
+        </CardHeader>
+        <CardContent className="pt-0 pb-4">
+          <div className="h-[280px] flex items-center justify-center text-muted-foreground">
+            No data available
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -83,15 +118,19 @@ const LoanPurposeChart = ({ dataSource = "premier" }: LoanPurposeChartProps) => 
               angle={-45}
               textAnchor="end"
               height={80}
+              interval={0}
             />
             <YAxis 
               tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
               label={{ value: 'Amount (KES K)', angle: -90, position: 'insideLeft', fill: "hsl(var(--muted-foreground))" }}
             />
             <Tooltip 
-              formatter={(value: any) => [formatCurrency(Number(value) * 1000), "Amount"]}
+              formatter={(value: any) => {
+                const numValue = Number(value);
+                return [isNaN(numValue) ? "0" : formatCurrency(numValue * 1000), "Amount"];
+              }}
             />
-            <Bar dataKey="amount" fill="hsl(var(--primary))" radius={4} />
+            <Bar dataKey="amount" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

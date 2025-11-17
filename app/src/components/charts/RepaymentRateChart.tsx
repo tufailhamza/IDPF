@@ -13,7 +13,7 @@ const RepaymentRateChart = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="text-center space-y-2">
-          <div className="text-3xl font-bold text-success">{repaymentRate}%</div>
+          <div className="text-3xl font-bold text-success">{repaymentRate.toFixed(2)}%</div>
           <div className="text-sm text-muted-foreground">Repayment Rate</div>
         </div>
         
@@ -24,7 +24,7 @@ const RepaymentRateChart = () => {
           </div>
           <Progress value={100} className="h-2" />
           <div className="text-xs text-muted-foreground">
-            Target: {target}% | Current: {repaymentRate}%
+            Target: {target.toFixed(2)}% | Current: {repaymentRate.toFixed(2)}%
           </div>
         </div>
       </CardContent>

@@ -106,8 +106,12 @@ export async function GET(req: NextRequest) {
       : 0;
 
     const totalOwners = femaleOwners + maleOwners;
-    const femaleOwnerPercent = totalOwners > 0 ? (femaleOwners / totalOwners) * 100 : 0;
-    const maleOwnerPercent = totalOwners > 0 ? (maleOwners / totalOwners) * 100 : 0;
+    const femaleOwnerPercent = totalOwners > 0 
+      ? parseFloat(((femaleOwners / totalOwners) * 100).toFixed(2)) 
+      : 0;
+    const maleOwnerPercent = totalOwners > 0 
+      ? parseFloat(((maleOwners / totalOwners) * 100).toFixed(2)) 
+      : 0;
 
     console.log(`Processed YTD 2025 data from sheet "${sheetName}"`);
     console.log(`Total Portfolio: ${totalPortfolioValue}, Loans: ${totalLoans}, Schools: ${schools.size}, Branches: ${branches.size}`);

@@ -21,11 +21,11 @@ const DignitasTrainingCard = ({
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-muted-foreground">Participants</span>
-                <span className="text-2xl font-bold text-foreground">{participationYes}%</span>
+                <span className="text-2xl font-bold text-foreground">{typeof participationYes === 'number' ? participationYes.toFixed(2) : participationYes}%</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-xs text-muted-foreground">Non-Participants</span>
-                <span className="text-2xl font-bold text-foreground">{participationNo}%</span>
+                <span className="text-2xl font-bold text-foreground">{typeof participationNo === 'number' ? participationNo.toFixed(2) : participationNo}%</span>
               </div>
             </div>
           </div>
