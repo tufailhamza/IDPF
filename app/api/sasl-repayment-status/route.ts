@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
     }
 
     const worksheet = workbook.Sheets[sheetName];
-    const data = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: null });
+    const data = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: null }) as (any | null)[][];
 
     // Get column indices
     const colC = excelColumnToIndex("C"); // Column C (index 2)
