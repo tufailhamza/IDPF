@@ -80,7 +80,7 @@ const LoanDisbursementByYearChart = ({ dataSource = "premier" }: LoanDisbursemen
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>
-          <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <ComposedChart data={chartData} margin={{ top: 0, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
             <XAxis 
               dataKey="year" 
@@ -94,14 +94,25 @@ const LoanDisbursementByYearChart = ({ dataSource = "premier" }: LoanDisbursemen
             <YAxis 
               yAxisId="right"
               orientation="right"
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-              label={{ value: 'Volume / Avg (KES K)', angle: 90, position: 'insideRight', fill: "hsl(var(--muted-foreground))" }}
+              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+              label={{ value: 'Volume', angle: 90, position: 'insideRight', fill: "hsl(var(--muted-foreground))" }}
+            />
+            <YAxis 
+              yAxisId="avg"
+              orientation="right"
+              tick={{ fill: "hsl(220, 50%, 45%)", fontSize: 10 }}
+              hide={true}
             />
             <Tooltip />
-            <Legend />
+            <Legend 
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{ paddingTop: '10px', paddingBottom: '10px' }}
+              height={50}
+            />
             <Bar yAxisId="left" dataKey="annualValue" fill="hsl(220, 70%, 65%)" name="Annual Value (KES M)" radius={4} />
             <Bar yAxisId="right" dataKey="annualVolume" fill="hsl(var(--primary))" name="Annual Volume" radius={4} />
-            <Line yAxisId="right" type="monotone" dataKey="averageValue" stroke="hsl(220, 50%, 45%)" strokeWidth={3} name="Average Value (KES K)" dot={{ fill: "hsl(220, 50%, 45%)", r: 5 }} />
+            <Line yAxisId="avg" type="monotone" dataKey="averageValue" stroke="hsl(220, 50%, 45%)" strokeWidth={3} name="Average Value (KES K)" dot={{ fill: "hsl(220, 50%, 45%)", r: 5 }} />
           </ComposedChart>
         </ResponsiveContainer>
       </CardContent>

@@ -45,7 +45,7 @@ const GrantDisbursementChart = () => {
           <BarChart 
             data={data} 
             layout="horizontal"
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 60, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis 
@@ -74,7 +74,12 @@ const GrantDisbursementChart = () => {
                 borderRadius: '6px'
               }}
             />
-            <Legend />
+            <Legend 
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{ paddingTop: '10px', paddingBottom: '10px' }}
+              height={50}
+            />
             <Bar 
               dataKey="paid" 
               stackId="a"

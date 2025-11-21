@@ -22,7 +22,7 @@ const RepaymentRateChart = () => {
             <span className="text-muted-foreground">Progress to Target</span>
             <span className="text-success font-medium">Above Target</span>
           </div>
-          <Progress value={100} className="h-2" />
+          <Progress value={100} className="h-2 [&>div]:bg-success" />
           <div className="text-xs text-muted-foreground">
             Target: {target.toFixed(2)}% | Current: {repaymentRate.toFixed(2)}%
           </div>

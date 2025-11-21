@@ -125,7 +125,7 @@ const AnnualReport = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <KPICard
-          title="Total Loan Portfolio Value"
+          title="Loan Value Disbursed"
           value={ytdData ? formatCurrencyM(ytdData.totalPortfolioValue || 0) : "KES 488.65M"}
           subtitle="Total capital deployed in 2025"
           trend=""

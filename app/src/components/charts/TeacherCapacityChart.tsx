@@ -38,7 +38,7 @@ const TeacherCapacityChart = () => {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data}>
+          <BarChart data={data} margin={{ top: 60, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis 
               dataKey="year" 
@@ -62,7 +62,12 @@ const TeacherCapacityChart = () => {
                 borderRadius: '6px'
               }}
             />
-            <Legend />
+            <Legend 
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{ paddingTop: '10px', paddingBottom: '10px' }}
+              height={50}
+            />
             <Bar 
               dataKey="inService" 
               fill="hsl(var(--primary))" 

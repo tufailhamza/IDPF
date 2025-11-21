@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface TopBranchesChartProps {
   dataSource?: "premier" | "sasl";
@@ -19,30 +19,16 @@ const fetchTopBranches = async (source: "premier" | "sasl" = "premier") => {
   return response.json();
 };
 
-const COLORS = [
-  "hsl(var(--warning))",
-  "hsl(var(--primary-light))",
-  "hsl(var(--primary))",
-  "hsl(221, 61%, 35%)",
-  "hsl(221, 61%, 30%)",
-  "hsl(221, 61%, 25%)",
-  "hsl(221, 61%, 22%)",
-  "hsl(221, 61%, 20%)",
-  "hsl(221, 61%, 18%)",
-  "hsl(221, 61%, 16%)",
-];
-
 const TopBranchesChart = ({ dataSource = "premier" }: TopBranchesChartProps) => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["top-branches", dataSource],
     queryFn: () => fetchTopBranches(dataSource),
   });
 
-  // Transform data for the chart - convert to millions
+  // Transform data for the chart - convert to millions for stacked bar chart
   const chartData = data?.map((item: any, index: number) => ({
     branch: item.branch,
     commitment: item.commitment / 1000000, // Convert to millions
-    color: COLORS[index % COLORS.length],
   })) || [];
 
   if (isLoading) {
@@ -102,11 +88,7 @@ const TopBranchesChart = ({ dataSource = "premier" }: TopBranchesChartProps) => 
               width={110}
             />
             <Tooltip formatter={(value) => [`KES ${Number(value).toFixed(2)}M`, "Commitment"]} />
-            <Bar dataKey="commitment" radius={[0, 4, 4, 0]}>
-              {chartData.map((entry: any, index: number) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Bar>
+            <Bar dataKey="commitment" stackId="a" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

@@ -36,8 +36,9 @@ const KenyaLoanPurposeChart = () => {
   
   const chartData = data?.map((item: any, index: number) => ({
     name: item.name,
-    value: total > 0 ? (item.amount / total) * 100 : 0,
+    value: total > 0 ? Math.round((item.amount / total) * 100 * 100) / 100 : 0, // Round to 2 decimals
     amount: item.amount / 1000000, // Convert to millions
+    loans: item.loans || 0,
     color: COLORS[index % COLORS.length],
   })) || [];
 
@@ -89,7 +90,7 @@ const KenyaLoanPurposeChart = () => {
               outerRadius={150}
               paddingAngle={2}
               dataKey="value"
-              label={({ value }) => `${value.toFixed(2)}%`}
+              label={({ value }) => `${value}%`}
               labelLine={false}
             >
               {chartData.map((entry: any, index: number) => (
@@ -99,7 +100,7 @@ const KenyaLoanPurposeChart = () => {
             <Tooltip 
               formatter={(value, name, props) => {
                 const entry = props.payload;
-                return [`${Number(value).toFixed(2)}% (KES ${Number(entry.amount).toFixed(2)}M)`, "Distribution"];
+                return [`${value}% (KES ${entry.amount}M, ${entry.loans} loans)`, "Distribution"];
               }}
             />
             <Legend 

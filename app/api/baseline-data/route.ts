@@ -37,16 +37,9 @@ export async function GET(req: NextRequest) {
     const colR = 17; // Girls
     const colS = 18; // Total Student Reach
     
-    // Find Annual Fees column from header row
-    let colAQ = 42; // Default to AQ
-    for (let i = 0; i < headerRow.length; i++) {
-      const header = String(headerRow[i] || "").toLowerCase().trim();
-      if (header.includes("annual fee") || header.includes("tuition") || (header.includes("fee") && header.includes("annual"))) {
-        colAQ = i;
-        console.log(`Found Annual Fees column at index ${i} (header: "${headerRow[i]}")`);
-        break;
-      }
-    }
+    // Find Annual Fees column - specifically COL AQ (index 42)
+    // COL AQ contains annual fees in USD, which will be converted to KES
+    const colAQ = 42; // COL AQ = index 42
 
     // Process data rows (skip header)
     let totalSchools = 0;
@@ -120,50 +113,22 @@ export async function GET(req: NextRequest) {
         }
       }
 
-      // Annual Fees: COL AQ
-      // Try to find annual fees - check primary column first, then fallbacks
-      let feeFound = false;
-      
-      // First, try the detected/default column (AQ = 42)
+      // Annual Fees: COL AQ (index 42) - specifically use this column only
+      // Values in COL AQ are in USD - keep as USD (do not convert)
       if (row[colAQ] !== null && row[colAQ] !== undefined && row[colAQ] !== "") {
-        const fee = Number(row[colAQ]);
-        // Accept any positive number for the primary column
+        let feeValue = row[colAQ];
+        
+        // Parse string values if needed
+        if (typeof feeValue === 'string') {
+          // Remove currency symbols, commas, and extract number
+          feeValue = feeValue.replace(/[^\d.]/g, '');
+        }
+        
+        const fee = Number(feeValue);
+        
+        // Keep values as USD (no conversion)
         if (!isNaN(fee) && fee > 0) {
           tuitionFees.push(fee);
-          feeFound = true;
-        }
-      }
-      
-      // If primary column doesn't have data, try checking nearby columns (40-50)
-      if (!feeFound) {
-        for (let colIndex = 40; colIndex <= 50; colIndex++) {
-          if (row[colIndex] !== null && row[colIndex] !== undefined && row[colIndex] !== "") {
-            const fee = Number(row[colIndex]);
-            // Check if it's a reasonable annual fee (between 1,000 and 500,000 KES)
-            if (!isNaN(fee) && fee >= 1000 && fee <= 500000) {
-              tuitionFees.push(fee);
-              feeFound = true;
-              break; // Only take first valid fee found in this range
-            }
-          }
-        }
-      }
-      
-      // Last resort: search columns 19-39 and 51+ for reasonable fee values
-      if (!feeFound && row.length > 0) {
-        for (let colIndex = 19; colIndex < Math.min(row.length, 100); colIndex++) {
-          // Skip columns 40-50 (already checked above)
-          if (colIndex >= 40 && colIndex <= 50) continue;
-          
-          if (row[colIndex] !== null && row[colIndex] !== undefined && row[colIndex] !== "") {
-            const fee = Number(row[colIndex]);
-            // Check if it's a reasonable annual fee (between 1,000 and 500,000 KES)
-            if (!isNaN(fee) && fee >= 1000 && fee <= 500000) {
-              tuitionFees.push(fee);
-              feeFound = true;
-              break; // Only take first valid fee found
-            }
-          }
         }
       }
     }
@@ -194,13 +159,13 @@ export async function GET(req: NextRequest) {
 
     // Calculate tuition fee statistics
     // Filter out any invalid fees and ensure we have valid numbers
-    // Also filter to reasonable range (1,000 to 500,000) to avoid picking up wrong columns
+    // Filter to reasonable range for USD (10 to 5,000 USD) to avoid picking up wrong columns
     const validFees = tuitionFees.filter(fee => 
       fee > 0 && 
       !isNaN(fee) && 
       isFinite(fee) &&
-      fee >= 1000 &&  // At least 1,000 KES
-      fee <= 500000   // At most 500,000 KES
+      fee >= 10 &&   // At least $10 USD
+      fee <= 5000    // At most $5,000 USD
     );
     
     const averageTuition = validFees.length > 0 
@@ -209,44 +174,49 @@ export async function GET(req: NextRequest) {
     const lowestTuition = validFees.length > 0 ? Math.min(...validFees) : 0;
     const maximumTuition = validFees.length > 0 ? Math.max(...validFees) : 0;
     
-    console.log(`Fee statistics - Total fees found: ${tuitionFees.length}, Valid fees (1K-500K range): ${validFees.length}`);
+    console.log(`Fee statistics - Total fees found: ${tuitionFees.length}, Valid fees ($10-$5K USD range): ${validFees.length}`);
     if (validFees.length > 0) {
-      console.log(`Fee range: ${lowestTuition} - ${maximumTuition}, Average: ${averageTuition}`);
+      console.log(`Fee range: $${lowestTuition} - $${maximumTuition}, Average: $${averageTuition}`);
       console.log(`Sample fees (first 10):`, validFees.slice(0, 10));
     } else if (tuitionFees.length > 0) {
-      console.log(`WARNING: Found ${tuitionFees.length} fees but none in valid range (1K-500K)`);
+      console.log(`WARNING: Found ${tuitionFees.length} fees but none in valid range ($10-$5K USD)`);
       console.log(`Sample fees found (may be out of range):`, tuitionFees.slice(0, 10));
     }
 
-    // Calculate quartiles
+    // Calculate quartiles from COL AQ values (in USD)
+    // Use ALL values from COL AQ for quartile calculation, not filtered
+    // Quartile 1: 25th percentile, Quartile 2: 50th percentile, Quartile 3: 75th percentile, Quartile 4: 100th percentile
     let quartile1 = 0;
     let quartile2 = 0;
     let quartile3 = 0;
     let quartile4 = 0;
 
     if (tuitionFees.length > 0) {
+      // Use all tuitionFees from COL AQ for quartile calculation
       const sortedFees = [...tuitionFees].sort((a, b) => a - b);
       const n = sortedFees.length;
       
-      // Q1 (25th percentile)
+      // Q1 (25th percentile) - value at 25% of sorted data
       const q1Index = Math.floor(n * 0.25);
       quartile1 = sortedFees[q1Index] || 0;
       
-      // Q2 (50th percentile / median)
+      // Q2 (50th percentile / median) - value at 50% of sorted data
       const q2Index = Math.floor(n * 0.5);
       quartile2 = sortedFees[q2Index] || 0;
       
-      // Q3 (75th percentile)
+      // Q3 (75th percentile) - value at 75% of sorted data
       const q3Index = Math.floor(n * 0.75);
       quartile3 = sortedFees[q3Index] || 0;
       
-      // Q4 (100th percentile / maximum)
+      // Q4 (100th percentile / maximum) - maximum value
       quartile4 = sortedFees[n - 1] || 0;
+      
+      console.log(`Quartiles from COL AQ (USD): Q1=$${quartile1}, Q2=$${quartile2}, Q3=$${quartile3}, Q4=$${quartile4} (from ${n} values)`);
     }
 
     console.log(`Processed ${validRows} valid rows from sheet "${sheetName}"`);
     console.log(`Total Schools: ${totalSchools} (counted as ${validRows} valid rows), Student Reach: ${totalStudentReach}`);
-    console.log(`Annual Fees found: ${tuitionFees.length} entries, Average: ${averageTuition}, Lowest: ${lowestTuition}, Maximum: ${maximumTuition}`);
+    console.log(`Annual Fees found: ${tuitionFees.length} entries (USD), Average: $${averageTuition}, Lowest: $${lowestTuition}, Maximum: $${maximumTuition}`);
     
     // Debug: Check sample row data for annual fees
     if (tuitionFees.length === 0 && data.length > 1) {

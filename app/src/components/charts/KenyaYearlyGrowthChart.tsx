@@ -17,7 +17,7 @@ const KenyaYearlyGrowthChart = () => {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={data} margin={{ top: 20, right: 50, left: 20, bottom: 5 }}>
+          <BarChart data={data} margin={{ top: 60, right: 50, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
             <XAxis 
               dataKey="year" 
@@ -44,7 +44,9 @@ const KenyaYearlyGrowthChart = () => {
             />
             <Legend 
               verticalAlign="top"
-              height={36}
+              align="center"
+              wrapperStyle={{ paddingTop: '10px', paddingBottom: '10px' }}
+              height={50}
               formatter={(value) => {
                 if (value === "loanCount") return "Loan Count";
                 if (value === "disbursed") return "Disbursed (M KES)";

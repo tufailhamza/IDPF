@@ -42,8 +42,6 @@ export async function GET(req: NextRequest) {
     let maleOwners = 0;
     let totalLoans = 0;
 
-    // Also track monthly totals from specific cells (M10, M26, etc.)
-    // These are typically summary rows
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
       
@@ -57,19 +55,21 @@ export async function GET(req: NextRequest) {
         totalLoans++;
       }
 
-      // Total Loan Portfolio Value: SUM(COL M)
-      if (row[colM] !== null && row[colM] !== undefined && row[colM] !== "") {
-        const value = Number(row[colM]);
+      // Total Loan Portfolio Value: SUM(COL J) - Loan Value Disbursed
+      if (row[colJ] !== null && row[colJ] !== undefined && row[colJ] !== "") {
+        let loanValue = row[colJ];
+        
+        // Parse string values if needed
+        if (typeof loanValue === 'string') {
+          // Remove currency symbols, commas, and extract number
+          loanValue = loanValue.replace(/[^\d.]/g, '');
+        }
+        
+        const value = Number(loanValue);
         if (!isNaN(value) && value > 0) {
           totalPortfolioValue += value;
-        }
-      }
-
-      // Average Loan Size: AVERAGE(COL J)
-      if (row[colJ] !== null && row[colJ] !== undefined && row[colJ] !== "") {
-        const loanSize = Number(row[colJ]);
-        if (!isNaN(loanSize) && loanSize > 0) {
-          loanSizes.push(loanSize);
+          // Also add to loanSizes for average calculation
+          loanSizes.push(value);
         }
       }
 
@@ -101,6 +101,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Calculate averages and percentages
+    // Average Loan Size: AVERAGE(COL J) - using the same values from COL J
     const averageLoanSize = loanSizes.length > 0
       ? loanSizes.reduce((sum, size) => sum + size, 0) / loanSizes.length
       : 0;
@@ -114,7 +115,7 @@ export async function GET(req: NextRequest) {
       : 0;
 
     console.log(`Processed YTD 2025 data from sheet "${sheetName}"`);
-    console.log(`Total Portfolio: ${totalPortfolioValue}, Loans: ${totalLoans}, Schools: ${schools.size}, Branches: ${branches.size}`);
+    console.log(`Loan Value Disbursed (SUM COL J): ${totalPortfolioValue}, Loans: ${totalLoans}, Schools: ${schools.size}, Branches: ${branches.size}`);
 
     return NextResponse.json({
       totalPortfolioValue,

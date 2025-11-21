@@ -34,7 +34,7 @@ const CashCoverageGauge = () => {
             <div className="space-y-3">
               <Progress 
                 value={percentage} 
-                className="h-6"
+                className="h-6 [&>div]:bg-success"
               />
               <div className="flex items-center justify-center gap-2">
                 <StatusIcon className={`h-4 w-4 text-${color}`} />

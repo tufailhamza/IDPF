@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 interface LoanPurposeChartProps {
   dataSource?: "premier" | "sasl";
@@ -110,19 +110,20 @@ const LoanPurposeChart = ({ dataSource = "premier" }: LoanPurposeChartProps) => 
       </CardHeader>
       <CardContent className="pt-0 pb-4">
         <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+          <BarChart data={chartData} margin={{ top: 0, right: 10, left: 10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
             <XAxis 
               dataKey="name" 
               tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
-              angle={-45}
-              textAnchor="end"
-              height={80}
+              angle={0}
+              textAnchor="middle"
+              height={20}
               interval={0}
+              dx={10}
             />
             <YAxis 
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-              label={{ value: 'Amount (KES K)', angle: -90, position: 'insideLeft', fill: "hsl(var(--muted-foreground))" }}
+              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+              label={{ value: 'Amount',margin: { right: 10 ,left: 10 }, angle: -90, position: 'insideLeft' }}
             />
             <Tooltip 
               formatter={(value: any) => {
@@ -130,7 +131,13 @@ const LoanPurposeChart = ({ dataSource = "premier" }: LoanPurposeChartProps) => 
                 return [isNaN(numValue) ? "0" : formatCurrency(numValue * 1000), "Amount"];
               }}
             />
-            <Bar dataKey="amount" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+            <Legend 
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{ paddingTop: '10px', paddingBottom: '10px' }}
+              height={50}
+            />
+            <Bar dataKey="amount" name="Amount (KES K)" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

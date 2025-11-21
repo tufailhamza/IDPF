@@ -13,6 +13,7 @@ import LoanPurposeChart from "@/components/charts/LoanPurposeChart";
 import LoanCycleChart from "@/components/charts/LoanCycleChart";
 import GenderDistributionChart from "@/components/charts/GenderDistributionChart";
 import TuitionFeeChart from "@/components/charts/TuitionFeeChart";
+import LoanRepaymentStatusCard from "@/components/charts/LoanRepaymentStatusCard";
 
 const fetchSASLBaselineData = async () => {
   const response = await fetch("/api/sasl-baseline-data");
@@ -90,6 +91,7 @@ const ProgramReporting = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <StudentReachCard value={saslData ? formatNumber(saslData.studentReach?.total || 0) : "89,234"} />
         <KPICard
           title="Total Number of Schools"
           value={saslData ? formatNumber(saslData.totalSchools) : "1,847"}
@@ -101,19 +103,19 @@ const ProgramReporting = () => {
           femalePercent={saslData?.schoolProprietorGender?.female}
           malePercent={saslData?.schoolProprietorGender?.male}
         />
-        <StudentGenderCard 
-          femalePercent={saslData?.studentReach?.girls}
-          malePercent={saslData?.studentReach?.boys}
-        />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <AnnualFeesCard 
           averageTuition={saslData ? formatCurrency(saslData.annualFees?.average || 0) : "KES 38,500"}
           lowestTuition={saslData ? formatCurrency(saslData.annualFees?.lowest || 0) : "KES 8,000"}
           maximumTuition={saslData ? formatCurrency(saslData.annualFees?.maximum || 0) : "KES 95,000"}
         />
-        <StudentReachCard value={saslData ? formatNumber(saslData.studentReach?.total || 0) : "89,234"} />
+        <StudentGenderCard 
+          femalePercent={saslData?.studentReach?.girls}
+          malePercent={saslData?.studentReach?.boys}
+        />
+        <LoanRepaymentStatusCard />
       </div>
 
       {/* 2025 YTD Loan Performance Data */}
@@ -124,7 +126,7 @@ const ProgramReporting = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <KPICard
-          title="Total Loan Portfolio Value"
+          title="Loan Value Disbursed"
           value={saslYTDData ? formatCurrencyM(saslYTDData.totalPortfolioValue || 0) : "KES 325.42M"}
           subtitle="Total capital deployed in 2025"
           trend=""

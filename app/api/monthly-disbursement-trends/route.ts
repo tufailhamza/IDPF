@@ -5,7 +5,7 @@ import { join } from "path";
 
 export async function GET(req: NextRequest) {
   try {
-    // Read the Excel file
+    // Read the Premier Credit Excel file
     const filePath = join(process.cwd(), "Monthly Loan Reports-Premier Credit.xlsx");
     const fileBuffer = await readFile(filePath);
     const workbook = XLSX.read(fileBuffer, { type: "buffer" });
@@ -16,18 +16,21 @@ export async function GET(req: NextRequest) {
     );
 
     if (!sheetName) {
+      console.log("Available sheets:", workbook.SheetNames);
       return NextResponse.json(
-        { error: "Summary - All Loans sheet not found" },
+        { error: "Summary - All Loans sheet not found", availableSheets: workbook.SheetNames },
         { status: 404 }
       );
     }
 
+    console.log(`Using sheet: "${sheetName}" from Monthly Loan Reports-Premier Credit.xlsx`);
+
     const worksheet = workbook.Sheets[sheetName];
     const data = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: null }) as any[][];
 
-    // Column indices: H = 7 (Monthly Value), I = 8 (Monthly Volume)
-    const colH = 7; // Monthly Value
-    const colI = 8; // Monthly Volume
+    // Column indices: G = 6 (Monthly Volume/Loan Count), H = 7 (Monthly Value/Loan Value Committed)
+    const colG = 6; // Monthly Volume / Loan Count
+    const colH = 7; // Monthly Value / Loan Value Committed
 
     const monthlyData: Array<{ month: string; monthlyValue: number; monthlyVolume: number }> = [];
 
@@ -54,14 +57,28 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      // Get Monthly Value (COL H) and Monthly Volume (COL I)
-      const monthlyValue = row[colH] !== null && row[colH] !== undefined && row[colH] !== ""
-        ? Number(row[colH])
-        : null;
+      // Get Monthly Value (COL H - Loan Value Committed) and Monthly Volume (COL G - Loan Count)
+      let monthlyValue = row[colH];
+      let monthlyVolume = row[colG];
       
-      const monthlyVolume = row[colI] !== null && row[colI] !== undefined && row[colI] !== ""
-        ? Number(row[colI])
-        : null;
+      // Parse string values if needed
+      if (monthlyValue !== null && monthlyValue !== undefined && monthlyValue !== "") {
+        if (typeof monthlyValue === 'string') {
+          monthlyValue = monthlyValue.replace(/[^\d.]/g, '');
+        }
+        monthlyValue = Number(monthlyValue);
+      } else {
+        monthlyValue = null;
+      }
+      
+      if (monthlyVolume !== null && monthlyVolume !== undefined && monthlyVolume !== "") {
+        if (typeof monthlyVolume === 'string') {
+          monthlyVolume = monthlyVolume.replace(/[^\d.]/g, '');
+        }
+        monthlyVolume = Number(monthlyVolume);
+      } else {
+        monthlyVolume = null;
+      }
 
       // Only add if both values are valid numbers
       if (monthlyValue !== null && !isNaN(monthlyValue) && monthlyVolume !== null && !isNaN(monthlyVolume)) {
@@ -74,6 +91,7 @@ export async function GET(req: NextRequest) {
     }
 
     console.log(`Processed ${monthlyData.length} monthly records from sheet "${sheetName}"`);
+    console.log(`Sample data:`, monthlyData.slice(0, 5));
 
     return NextResponse.json(monthlyData);
   } catch (err) {

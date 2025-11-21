@@ -54,14 +54,14 @@ const AnnualFeesCard = ({
           {/* Visual slider */}
           <div className="mt-auto pt-4">
             <div className="relative">
-              <div className="h-2 bg-muted rounded-full overflow-hidden flex">
+              <div className="h-2 rounded-full overflow-hidden flex" style={{ backgroundColor: 'hsl(142, 76%, 36%)' }}>
                 <div 
-                  className="h-full bg-primary transition-all" 
-                  style={{ width: `${averagePosition}%` }}
+                  className="h-full transition-all flex-shrink-0" 
+                  style={{ width: `${averagePosition}%`, backgroundColor: 'hsl(var(--primary))' }}
                 />
                 <div 
-                  className="h-full bg-success transition-all" 
-                  style={{ width: `${100 - averagePosition}%` }}
+                  className="h-full transition-all flex-1" 
+                  style={{ width: `${100 - averagePosition}%`, backgroundColor: 'hsl(142, 76%, 36%)' }}
                 />
               </div>
               <div 

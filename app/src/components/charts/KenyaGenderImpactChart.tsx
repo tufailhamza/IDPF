@@ -45,7 +45,12 @@ const KenyaGenderImpactChart = () => {
                 return [`${Number(value).toFixed(2)}% (${entry.loans} loans, KES ${entry.disbursed}M)`, "Distribution"];
               }}
             />
-            <Legend />
+            <Legend 
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{ paddingTop: '10px', paddingBottom: '10px' }}
+              height={50}
+            />
           </PieChart>
         </ResponsiveContainer>
         

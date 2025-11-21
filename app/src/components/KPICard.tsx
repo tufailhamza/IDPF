@@ -25,19 +25,19 @@ const KPICard = ({ title, value, subtitle, trend, trendType }: KPICardProps) => 
 
   return (
     <Card className="flex flex-col">
-      <CardContent className="flex-1 flex flex-col justify-center p-6">
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-          <div className="space-y-1">
-            <div className="text-2xl font-bold text-foreground">{value}</div>
-            <div className="text-xs text-muted-foreground">{subtitle}</div>
+      <CardContent className="flex-1 flex flex-col p-6">
+        <div className="flex flex-col h-full">
+          <h3 className="text-sm font-medium text-muted-foreground mb-3">{title}</h3>
+          <div className="flex-1 flex flex-col justify-center items-center space-y-1">
+            <div className="text-2xl font-bold text-foreground text-center">{value}</div>
+            <div className="text-xs text-muted-foreground text-center">{subtitle}</div>
+            {trend && (
+              <div className={`flex items-center justify-center gap-1 text-xs ${getTrendColor()}`}>
+                {getTrendIcon()}
+                <span>{trend}</span>
+              </div>
+            )}
           </div>
-          {trend && (
-            <div className={`flex items-center gap-1 text-xs ${getTrendColor()}`}>
-              {getTrendIcon()}
-              <span>{trend}</span>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>

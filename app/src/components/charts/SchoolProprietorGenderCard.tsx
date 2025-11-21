@@ -21,11 +21,11 @@ const SchoolProprietorGenderCard = ({
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-muted-foreground">Female Proprietors</span>
-                <span className="text-2xl font-bold text-foreground">{typeof femalePercent === 'number' ? femalePercent.toFixed(2) : femalePercent}%</span>
+                <span className="text-2xl font-bold text-foreground">{femalePercent}%</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-xs text-muted-foreground">Male Proprietors</span>
-                <span className="text-2xl font-bold text-foreground">{typeof malePercent === 'number' ? malePercent.toFixed(2) : malePercent}%</span>
+                <span className="text-2xl font-bold text-foreground">{malePercent}%</span>
               </div>
             </div>
           </div>
@@ -33,14 +33,14 @@ const SchoolProprietorGenderCard = ({
           {/* Visual slider */}
           <div className="mt-auto pt-4">
             <div className="relative">
-              <div className="h-2 bg-muted rounded-full overflow-hidden flex">
+              <div className="h-2 rounded-full overflow-hidden flex" style={{ backgroundColor: 'hsl(142, 76%, 36%)' }}>
                 <div 
-                  className="h-full bg-primary transition-all" 
-                  style={{ width: `${femalePercent}%` }}
+                  className="h-full transition-all flex-shrink-0" 
+                  style={{ width: `${femalePercent}%`, backgroundColor: 'hsl(var(--primary))' }}
                 />
                 <div 
-                  className="h-full bg-success transition-all" 
-                  style={{ width: `${malePercent}%` }}
+                  className="h-full transition-all flex-1" 
+                  style={{ width: `${malePercent}%`, backgroundColor: 'hsl(142, 76%, 36%)' }}
                 />
               </div>
               <div 

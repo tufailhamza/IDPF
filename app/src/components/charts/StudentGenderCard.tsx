@@ -32,14 +32,14 @@ const StudentGenderCard = ({
           {/* Visual slider */}
           <div className="mt-auto pt-4">
             <div className="relative">
-              <div className="h-2 bg-muted rounded-full overflow-hidden flex">
+              <div className="h-2 rounded-full overflow-hidden flex" style={{ backgroundColor: 'hsl(142, 76%, 36%)' }}>
                 <div 
-                  className="h-full bg-primary transition-all" 
-                  style={{ width: `${femalePercent}%` }}
+                  className="h-full transition-all flex-shrink-0" 
+                  style={{ width: `${femalePercent}%`, backgroundColor: 'hsl(var(--primary))' }}
                 />
                 <div 
-                  className="h-full bg-success transition-all" 
-                  style={{ width: `${malePercent}%` }}
+                  className="h-full transition-all flex-1" 
+                  style={{ width: `${malePercent}%`, backgroundColor: 'hsl(142, 76%, 36%)' }}
                 />
               </div>
               <div 

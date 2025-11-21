@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
     console.log(`Header row sample:`, headerRow.slice(0, 15));
 
     // Aggregate by loan purpose
-    const purposeTotals: { [key: string]: number } = {};
+    const purposeTotals: { [key: string]: { amount: number; loans: number } } = {};
 
     // Process data rows (skip header)
     for (let i = 1; i < data.length; i++) {
@@ -103,18 +103,20 @@ export async function GET(req: NextRequest) {
             .join(" ");
 
           if (!purposeTotals[normalizedPurpose]) {
-            purposeTotals[normalizedPurpose] = 0;
+            purposeTotals[normalizedPurpose] = { amount: 0, loans: 0 };
           }
-          purposeTotals[normalizedPurpose] += loanAmount;
+          purposeTotals[normalizedPurpose].amount += loanAmount;
+          purposeTotals[normalizedPurpose].loans += 1;
         }
       }
     }
 
     // Convert to array and sort by total (descending)
     const purposeData = Object.entries(purposeTotals)
-      .map(([name, amount]) => ({
+      .map(([name, data]) => ({
         name,
-        amount,
+        amount: data.amount,
+        loans: data.loans,
       }))
       .sort((a, b) => b.amount - a.amount);
 

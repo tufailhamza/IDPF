@@ -35,9 +35,10 @@ const LoanPortfolioCompositionChart = () => {
             </Pie>
             <Tooltip formatter={(value) => [`${Number(value).toFixed(2)}%`, "Percentage"]} />
             <Legend 
-              verticalAlign="middle" 
-              align="right"
-              layout="vertical"
+              verticalAlign="top"
+              align="left"
+              wrapperStyle={{ paddingTop: '10px', paddingBottom: '10px' }}
+              height={50}
               iconType="square"
             />
           </PieChart>

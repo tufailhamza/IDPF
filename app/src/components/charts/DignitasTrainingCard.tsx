@@ -33,14 +33,14 @@ const DignitasTrainingCard = ({
           {/* Visual slider */}
           <div className="mt-auto pt-4">
             <div className="relative">
-              <div className="h-2 bg-muted rounded-full overflow-hidden flex">
+              <div className="h-2 rounded-full overflow-hidden flex" style={{ backgroundColor: 'hsl(142, 76%, 36%)' }}>
                 <div 
-                  className="h-full bg-primary transition-all" 
-                  style={{ width: `${participationYes}%` }}
+                  className="h-full transition-all flex-shrink-0" 
+                  style={{ width: `${participationYes}%`, backgroundColor: 'hsl(var(--primary))' }}
                 />
                 <div 
-                  className="h-full bg-success transition-all" 
-                  style={{ width: `${participationNo}%` }}
+                  className="h-full transition-all flex-1" 
+                  style={{ width: `${participationNo}%`, backgroundColor: 'hsl(142, 76%, 36%)' }}
                 />
               </div>
               <div 

@@ -45,7 +45,7 @@ const IncomeQuintileChart = () => {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data} layout="horizontal">
+          <BarChart data={data} layout="horizontal" margin={{ top: 60, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis 
               type="number"
@@ -72,7 +72,12 @@ const IncomeQuintileChart = () => {
                 borderRadius: '6px'
               }}
             />
-            <Legend />
+            <Legend 
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{ paddingTop: '10px', paddingBottom: '10px' }}
+              height={50}
+            />
             <Bar 
               dataKey="q1" 
               stackId="a"

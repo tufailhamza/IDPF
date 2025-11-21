@@ -40,7 +40,7 @@ const BudgetVarianceChart = () => {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>
-          <ComposedChart data={data}>
+          <ComposedChart data={data} margin={{ top: 60, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis 
               dataKey="category" 
@@ -66,7 +66,12 @@ const BudgetVarianceChart = () => {
                 borderRadius: '6px'
               }}
             />
-            <Legend />
+            <Legend 
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{ paddingTop: '10px', paddingBottom: '10px' }}
+              height={50}
+            />
             <Bar dataKey="budget" fill="hsl(var(--primary))" name="Budget" />
             <Bar dataKey="actual" fill="hsl(var(--secondary))" name="Actual" />
             <Bar dataKey="forecast" fill="hsl(var(--accent))" name="Forecast" />

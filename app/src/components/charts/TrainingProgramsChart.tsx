@@ -47,10 +47,11 @@ const TrainingProgramsChart = () => {
               }}
             />
             <Legend 
-              verticalAlign="bottom" 
-              height={36}
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{ paddingTop: '10px', paddingBottom: '10px', fontSize: '12px' }}
+              height={50}
               iconType="circle"
-              wrapperStyle={{ fontSize: '12px' }}
             />
           </PieChart>
         </ResponsiveContainer>
