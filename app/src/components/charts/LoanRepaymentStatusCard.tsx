@@ -17,8 +17,8 @@ const LoanRepaymentStatusCard = () => {
     queryFn: fetchRepaymentStatus,
   });
 
-  const repaymentPercent = data?.repaymentPercent || 72.5;
-  const arrearsPercent = data?.arrearsPercent || 27.5;
+  const repaymentPercent = data?.repaymentPercent || 96;
+  const arrearsPercent = data?.arrearsPercent || 4;
 
   if (isLoading) {
     return (

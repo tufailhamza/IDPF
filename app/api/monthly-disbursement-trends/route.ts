@@ -33,6 +33,11 @@ export async function GET(req: NextRequest) {
     const colH = 7; // Monthly Value / Loan Value Committed
 
     const monthlyData: Array<{ month: string; monthlyValue: number; monthlyVolume: number }> = [];
+    let currentYear = "";
+
+    // List of month names to identify month rows
+    const monthNames = ["january", "february", "march", "april", "may", "june", 
+                       "july", "august", "september", "october", "november", "december"];
 
     // Process data rows (skip header)
     for (let i = 1; i < data.length; i++) {
@@ -43,17 +48,27 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      // Skip rows that look like annual totals (usually contain "Total" or "Annual" in first column)
-      const firstCell = String(row[0] || "").toLowerCase().trim();
-      if (firstCell.includes("total") || firstCell.includes("annual") || firstCell.includes("sum")) {
+      const firstCell = String(row[0] || "").trim();
+      const firstCellLower = firstCell.toLowerCase();
+
+      // Check if this is a year row (e.g., "2022", "2023", etc.)
+      const yearMatch = firstCell.match(/^(202[2-5])$/);
+      if (yearMatch) {
+        currentYear = yearMatch[1];
         continue;
       }
 
-      // Get month label from first column (usually contains date or month name)
-      const monthLabel = row[0] ? String(row[0]).trim() : "";
+      // Skip rows that look like annual totals or averages
+      if (firstCellLower.includes("total") || firstCellLower.includes("annual") || 
+          firstCellLower.includes("sum") || firstCellLower.includes("avg") ||
+          firstCellLower.includes("avgs")) {
+        continue;
+      }
+
+      // Check if this is a month row
+      const isMonthRow = monthNames.some(month => firstCellLower.startsWith(month));
       
-      // Skip if no month label
-      if (!monthLabel) {
+      if (!isMonthRow) {
         continue;
       }
 
@@ -82,6 +97,8 @@ export async function GET(req: NextRequest) {
 
       // Only add if both values are valid numbers
       if (monthlyValue !== null && !isNaN(monthlyValue) && monthlyVolume !== null && !isNaN(monthlyVolume)) {
+        // Format month label with year: "January 2022"
+        const monthLabel = currentYear ? `${firstCell} ${currentYear}` : firstCell;
         monthlyData.push({
           month: monthLabel,
           monthlyValue,
