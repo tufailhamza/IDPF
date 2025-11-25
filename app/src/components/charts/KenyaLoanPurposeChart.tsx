@@ -75,7 +75,7 @@ const KenyaLoanPurposeChart = () => {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Loan Portfolio Composition by Purpose</CardTitle>
-        <p className="text-sm text-muted-foreground">Infrastructure-focused lending dominates portfolio</p>
+       
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>

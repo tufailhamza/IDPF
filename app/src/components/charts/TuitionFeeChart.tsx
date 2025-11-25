@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 interface TuitionFeeChartProps {
   dataSource?: "premier" | "sasl";
@@ -133,9 +133,11 @@ const TuitionFeeChart = ({ dataSource = "premier" }: TuitionFeeChartProps) => {
                 return label;
               }}
             />
+           
             <Bar 
               dataKey="value" 
               fill="hsl(var(--primary))" 
+              name="Quartile"
               radius={[4, 4, 0, 0]}
               label={(props: any) => {
                 const { x, y, width, payload } = props;
@@ -161,6 +163,27 @@ const TuitionFeeChart = ({ dataSource = "premier" }: TuitionFeeChartProps) => {
             />
           </BarChart>
         </ResponsiveContainer>
+        {/* Custom Legend showing Quartile Ranges */}
+        <div className="mt-4 pt-4 border-t border-border">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {chartData.map((item, index) => {
+              if (item.range && Array.isArray(item.range) && item.range.length === 2 && item.range[0] !== undefined && item.range[1] !== undefined) {
+                return (
+                  <div key={index} className="flex flex-col items-center text-center">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "hsl(var(--primary))" }} />
+                      <span className="text-sm font-medium text-foreground">{item.quartile}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      ${new Intl.NumberFormat("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(item.range[0])} - ${new Intl.NumberFormat("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(item.range[1])}
+                    </span>
+                  </div>
+                );
+              }
+              return null;
+            })}
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

@@ -177,7 +177,7 @@ const AnnualReport = () => {
       </div>
 
       <LoanDisbursementByYearChart />
-      <MonthlyLoanDisbursementChart />
+      <MonthlyLoanDisbursementChart dataSource="premier" />
       <KenyaBranchPerformanceChart />
       <KenyaLoanPurposeChart />
       <LoanCycleChart />
