@@ -139,7 +139,9 @@ const TuitionFeeChart = ({ dataSource = "premier" }: TuitionFeeChartProps) => {
               radius={[4, 4, 0, 0]}
               label={(props: any) => {
                 const { x, y, width, payload } = props;
-                if (!payload || !payload.range) return null;
+                if (!payload || !payload.range) {
+                  return <g />;
+                }
                 const range = payload.range || [];
                 if (range.length === 2 && range[0] !== undefined && range[1] !== undefined) {
                   return (
@@ -154,7 +156,7 @@ const TuitionFeeChart = ({ dataSource = "premier" }: TuitionFeeChartProps) => {
                     </text>
                   );
                 }
-                return null;
+                return <g />;
               }}
             />
           </BarChart>
