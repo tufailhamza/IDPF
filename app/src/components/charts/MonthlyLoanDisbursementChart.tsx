@@ -72,7 +72,6 @@ const MonthlyLoanDisbursementChart = () => {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Monthly Loan Disbursement Trends (2022-25)</CardTitle>
-        <p className="text-sm text-muted-foreground">Loan volume and commitment over time</p>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={360}>

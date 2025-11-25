@@ -87,7 +87,6 @@ const ProgramReporting = () => {
       {/* Program Reach */}
       <div className="space-y-2">
         <h2 className="text-xl font-bold text-foreground">Program Reach Profile</h2>
-        <p className="text-muted-foreground">Program reach and demographic profile</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -121,7 +120,7 @@ const ProgramReporting = () => {
       {/* 2025 YTD Loan Performance Data */}
       <div className="space-y-2">
         <h2 className="text-xl font-bold text-foreground">2025 YTD Loan Performance Data</h2>
-        <p className="text-muted-foreground">Current year financial performance</p>
+       
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -172,7 +171,7 @@ const ProgramReporting = () => {
       {/* Annual Loan Portfolio Performance */}
       <div className="space-y-2">
         <h2 className="text-xl font-bold text-foreground">Annual Loan Portfolio Performance</h2>
-        <p className="text-muted-foreground">Historical portfolio analysis and trends (2019-2025)</p>
+     
       </div>
 
       <LoanDisbursementByYearChart dataSource="sasl" />

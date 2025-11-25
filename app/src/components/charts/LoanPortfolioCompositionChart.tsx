@@ -13,7 +13,6 @@ const LoanPortfolioCompositionChart = () => {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Loan Portfolio Composition by Purpose</CardTitle>
-        <p className="text-sm text-muted-foreground">Distribution of loan purposes</p>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>

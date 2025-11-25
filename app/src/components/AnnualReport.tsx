@@ -14,6 +14,7 @@ import KenyaLoanPurposeChart from "@/components/charts/KenyaLoanPurposeChart";
 import LoanCycleChart from "@/components/charts/LoanCycleChart";
 import GenderDistributionChart from "@/components/charts/GenderDistributionChart";
 import TuitionFeeChart from "@/components/charts/TuitionFeeChart";
+import LoanRepaymentStatusDoughnutChart from "@/components/charts/LoanRepaymentStatusDoughnutChart";
 
 const fetchBaselineData = async () => {
   const response = await fetch("/api/baseline-data");
@@ -97,6 +98,7 @@ const AnnualReport = () => {
           trend=""
           trendType="neutral"
         />
+        <StudentReachCard value={baselineData ? formatNumber(baselineData.studentReach?.total || 0) : "104,231"} />
         <SchoolProprietorGenderCard 
           femalePercent={baselineData?.schoolProprietorGender?.female}
           malePercent={baselineData?.schoolProprietorGender?.male}
@@ -114,13 +116,13 @@ const AnnualReport = () => {
           lowestTuition={baselineData ? formatCurrency(baselineData.annualFees?.lowest || 0) : "KES 12,000"}
           maximumTuition={baselineData ? formatCurrency(baselineData.annualFees?.maximum || 0) : "KES 125,000"}
         />
-        <StudentReachCard value={baselineData ? formatNumber(baselineData.studentReach?.total || 0) : "104,231"} />
+        <LoanRepaymentStatusDoughnutChart dataSource="premier" />
       </div>
 
       {/* 2025 YTD Loan Performance Data */}
       <div className="space-y-2">
         <h2 className="text-xl font-bold text-foreground">2025 YTD Loan Performance Data</h2>
-        <p className="text-muted-foreground">Current year financial performance</p>
+       
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -171,7 +173,7 @@ const AnnualReport = () => {
       {/* Loan Performance Analytics */}
       <div className="space-y-2">
         <h2 className="text-xl font-bold text-foreground">Loan Performance Analytics</h2>
-        <p className="text-muted-foreground">Detailed portfolio analysis and trends</p>
+      
       </div>
 
       <LoanDisbursementByYearChart />
@@ -180,10 +182,8 @@ const AnnualReport = () => {
       <KenyaLoanPurposeChart />
       <LoanCycleChart />
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GenderDistributionChart />
-        <TuitionFeeChart />
-      </div>
+      <GenderDistributionChart />
+      <TuitionFeeChart />
     </div>
   );
 };

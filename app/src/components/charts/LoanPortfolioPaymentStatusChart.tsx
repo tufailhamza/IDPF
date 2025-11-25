@@ -12,7 +12,6 @@ const LoanPortfolioPaymentStatusChart = () => {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Loan Portfolio Payment Status</CardTitle>
-        <p className="text-sm text-muted-foreground">Current repayment performance breakdown</p>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>

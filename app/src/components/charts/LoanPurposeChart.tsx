@@ -59,7 +59,6 @@ const LoanPurposeChart = ({ dataSource = "premier" }: LoanPurposeChartProps) => 
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Disbursement by Loan Purpose</CardTitle>
-          <p className="text-sm text-muted-foreground">Loan distribution by purpose</p>
         </CardHeader>
         <CardContent className="pt-0 pb-4">
           <div className="h-[280px] flex items-center justify-center text-muted-foreground">
@@ -75,7 +74,6 @@ const LoanPurposeChart = ({ dataSource = "premier" }: LoanPurposeChartProps) => 
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Disbursement by Loan Purpose</CardTitle>
-          <p className="text-sm text-muted-foreground">Loan distribution by purpose</p>
         </CardHeader>
         <CardContent className="pt-0 pb-4">
           <div className="h-[280px] flex items-center justify-center text-destructive">
@@ -91,7 +89,6 @@ const LoanPurposeChart = ({ dataSource = "premier" }: LoanPurposeChartProps) => 
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Disbursement by Loan Purpose</CardTitle>
-          <p className="text-sm text-muted-foreground">Loan distribution by purpose</p>
         </CardHeader>
         <CardContent className="pt-0 pb-4">
           <div className="h-[280px] flex items-center justify-center text-muted-foreground">
@@ -106,7 +103,7 @@ const LoanPurposeChart = ({ dataSource = "premier" }: LoanPurposeChartProps) => 
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base">Disbursement by Loan Purpose</CardTitle>
-        <p className="text-sm text-muted-foreground">Loan distribution by purpose</p>
+  
       </CardHeader>
       <CardContent className="pt-0 pb-4">
         <ResponsiveContainer width="100%" height={280}>

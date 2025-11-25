@@ -60,7 +60,6 @@ const LoanCycleChart = ({ dataSource = "premier" }: LoanCycleChartProps) => {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Number of Loans Issued by Cycle</CardTitle>
-        <p className="text-sm text-muted-foreground">Loan distribution across repayment cycles</p>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>

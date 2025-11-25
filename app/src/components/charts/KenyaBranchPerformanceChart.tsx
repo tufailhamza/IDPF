@@ -61,7 +61,6 @@ const KenyaBranchPerformanceChart = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Top 10 Branches by Total Disbursement (KES Millions)</CardTitle>
-          <p className="text-sm text-muted-foreground">Branch performance ranking - Top 10 represent 53.7% of portfolio</p>
         </CardHeader>
         <CardContent>
           <div className="h-[350px] flex items-center justify-center text-muted-foreground">
@@ -77,7 +76,6 @@ const KenyaBranchPerformanceChart = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Top 10 Branches by Total Disbursement (KES Millions)</CardTitle>
-          <p className="text-sm text-muted-foreground">Branch performance ranking - Top 10 represent 53.7% of portfolio</p>
         </CardHeader>
         <CardContent>
           <div className="h-[350px] flex items-center justify-center text-destructive">
@@ -93,7 +91,6 @@ const KenyaBranchPerformanceChart = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Top 10 Branches by Total Disbursement (KES Millions)</CardTitle>
-          <p className="text-sm text-muted-foreground">Branch performance ranking - Top 10 represent 53.7% of portfolio</p>
         </CardHeader>
         <CardContent>
           <div className="h-[350px] flex items-center justify-center text-muted-foreground">
@@ -108,7 +105,7 @@ const KenyaBranchPerformanceChart = () => {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Top 10 Branches by Total Disbursement (KES Millions)</CardTitle>
-        <p className="text-sm text-muted-foreground">Branch performance ranking - Top 10 represent 53.7% of portfolio</p>
+
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>

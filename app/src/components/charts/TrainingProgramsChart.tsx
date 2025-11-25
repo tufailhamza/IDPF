@@ -16,7 +16,6 @@ const TrainingProgramsChart = () => {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Training Programs Delivered</CardTitle>
-        <p className="text-sm text-muted-foreground">Participants by program type (2024)</p>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>

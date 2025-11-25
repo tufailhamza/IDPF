@@ -36,7 +36,6 @@ const TopBranchesChart = ({ dataSource = "premier" }: TopBranchesChartProps) => 
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Top 10 Branches by Total Loan Commitment (KES Millions)</CardTitle>
-          <p className="text-sm text-muted-foreground">Branch performance ranking</p>
         </CardHeader>
         <CardContent>
           <div className="h-[350px] flex items-center justify-center text-muted-foreground">
@@ -52,7 +51,6 @@ const TopBranchesChart = ({ dataSource = "premier" }: TopBranchesChartProps) => 
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Top 10 Branches by Total Loan Commitment (KES Millions)</CardTitle>
-          <p className="text-sm text-muted-foreground">Branch performance ranking</p>
         </CardHeader>
         <CardContent>
           <div className="h-[350px] flex items-center justify-center text-destructive">
@@ -66,7 +64,7 @@ const TopBranchesChart = ({ dataSource = "premier" }: TopBranchesChartProps) => 
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Top 10 Branches by Total Loan Commitment (KES Millions)</CardTitle>
-        <p className="text-sm text-muted-foreground">Branch performance ranking</p>
+       
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>

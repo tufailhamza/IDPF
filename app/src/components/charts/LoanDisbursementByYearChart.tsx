@@ -46,7 +46,6 @@ const LoanDisbursementByYearChart = ({ dataSource = "premier" }: LoanDisbursemen
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Loan Disbursement by Year</CardTitle>
-          <p className="text-sm text-muted-foreground">Annual value, volume, and average loan size</p>
         </CardHeader>
         <CardContent>
           <div className="h-[350px] flex items-center justify-center text-muted-foreground">
@@ -62,7 +61,6 @@ const LoanDisbursementByYearChart = ({ dataSource = "premier" }: LoanDisbursemen
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Loan Disbursement by Year</CardTitle>
-          <p className="text-sm text-muted-foreground">Annual value, volume, and average loan size</p>
         </CardHeader>
         <CardContent>
           <div className="h-[350px] flex items-center justify-center text-destructive">
@@ -76,7 +74,7 @@ const LoanDisbursementByYearChart = ({ dataSource = "premier" }: LoanDisbursemen
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Loan Disbursement by Year</CardTitle>
-        <p className="text-sm text-muted-foreground">Annual value, volume, and average loan size</p>
+  
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>

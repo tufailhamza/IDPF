@@ -47,7 +47,6 @@ const KenyaLoanPurposeChart = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Loan Portfolio Composition by Purpose</CardTitle>
-          <p className="text-sm text-muted-foreground">Infrastructure-focused lending dominates portfolio</p>
         </CardHeader>
         <CardContent>
           <div className="h-[350px] flex items-center justify-center text-muted-foreground">
@@ -63,7 +62,6 @@ const KenyaLoanPurposeChart = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Loan Portfolio Composition by Purpose</CardTitle>
-          <p className="text-sm text-muted-foreground">Infrastructure-focused lending dominates portfolio</p>
         </CardHeader>
         <CardContent>
           <div className="h-[350px] flex items-center justify-center text-destructive">

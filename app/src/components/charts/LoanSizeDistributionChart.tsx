@@ -15,7 +15,6 @@ const LoanSizeDistributionChart = () => {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">Loan Size Distribution: Volume vs Value</CardTitle>
-        <p className="text-sm text-muted-foreground">Loan count and commitment by size bands</p>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>
